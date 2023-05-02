@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "48749518761",
+    "firebase_url": "https://chatapp-bfbaa-default-rtdb.firebaseio.com",
+    "project_id": "chatapp-bfbaa",
+    "storage_bucket": "chatapp-bfbaa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:48749518761:android:b4cfccb42f13e4cedd6eb8",
+        "android_client_info": {
+          "package_name": "com.vungnv.chatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "48749518761-l54qgre4v5ug2oae9755ka9p511sopn3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAUDZ-S4RpkGTpqso3AkL_J-P-BS7KWqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "48749518761-l54qgre4v5ug2oae9755ka9p511sopn3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
