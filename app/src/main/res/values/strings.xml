@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">ChatApp</string>
+    <string name="home">Home</string>
+    <string name="like">Like</string>
+    <string name="notification">Notification</string>
+    <string name="profile">Profile</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login">Đăng nhập</string>
+    <string name="example_email">username@gmail.com</string>
+    <string name="password">Mật khẩu</string>
+    <string name="remember_me">Remember me</string>
+    <string name="do_not_have_acc">Chưa có tài khoản</string>
+    <string name="register">Đăng ký</string>
+    <string name="forgot_pass">Quên mật khẩu</string>
+    <string name="resend_confirm">Gửi lại xác nhận</string>
+    <string name="example_phone">Số điện thoại</string>
+    <string name="phone">(+84)</string>
+    <string name="get_otp">GET OTP</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="otp_verification">OTP Verification</string>
+    <string name="enter_otp">Enter the OTP sent to</string>
+    <string name="verify">Verify</string>
+    <string name="resend_otp">Resend OTP</string>
+    <string name="not_receive_the_otp">Didn\'t recevie the OTP? </string>
+    <string name="email">Email</string>
+    <string name="select_image">Chọn ảnh</string>
+    <string name="name">Họ tên</string>
+    <string name="create_new_account">Tạo tài khoản</string>
+    <string name="confirm_pass">Xác nhận mật khẩu</string>
+</resources>
