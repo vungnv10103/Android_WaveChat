@@ -15,7 +15,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "48749518761-l54qgre4v5ug2oae9755ka9p511sopn3.apps.googleusercontent.com",
+          "client_id": "48749518761-k5n7t4sg44ikfjrtg0lva713ojma2v95.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vungnv.chatapp",
+            "certificate_hash": "ca31b832bad0a8308eda19df23f6ec6c35fde194"
+          }
+        },
+        {
+          "client_id": "48749518761-1dg6a79dqr8jauopi522r2n6sek3i4n6.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -28,7 +36,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "48749518761-l54qgre4v5ug2oae9755ka9p511sopn3.apps.googleusercontent.com",
+              "client_id": "48749518761-1dg6a79dqr8jauopi522r2n6sek3i4n6.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

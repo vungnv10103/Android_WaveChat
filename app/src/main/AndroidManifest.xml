@@ -15,23 +15,32 @@
         android:theme="@style/Theme.ChatApp"
         tools:targetApi="31">
         <activity
-            android:name=".activities.signup.SignupActivity"
-            android:exported="true">
-
-        </activity>
+            android:name=".activities.login.VerifyPhoneNumberActivity"
+            android:exported="false" />
         <activity
-            android:name=".activities.login.LoginActivity"
+            android:name=".activities.login.PhoneNumberLoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.login.EmailLoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.login.OptionsLoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
+            android:name=".activities.signup.SignupActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.login.LoginActivity"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true" />
 
         <service
             android:name=".fcm.MyFirebaseMessagingService"

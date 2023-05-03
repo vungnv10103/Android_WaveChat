@@ -26,5 +26,6 @@
     <color name="input_background">#ECECEC</color>
     <color name="error">#B00020</color>
     <color name="primary_text">#212121</color>
+    <color name="button_background">#e7e8e9</color>
 
 </resources>
