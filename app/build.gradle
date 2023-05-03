@@ -30,6 +30,8 @@ android {
 }
 
 dependencies {
+    // google
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
     // firebase
     implementation 'com.google.firebase:firebase-auth-ktx:21.3.0'
     implementation 'com.google.firebase:firebase-messaging:23.1.2'

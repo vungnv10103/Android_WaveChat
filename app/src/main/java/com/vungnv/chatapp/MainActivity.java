@@ -13,6 +13,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.vungnv.chatapp.ui.HomeFragment;
 import com.vungnv.chatapp.ui.LikeFragment;
 import com.vungnv.chatapp.ui.NotificationFragment;
@@ -29,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvHome, tvLike, tvNotification, tvProfile;
 
     private int selectedTab = 1;
+    private GoogleSignInOptions gso;
+    private GoogleSignInClient gsc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +42,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         init();
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+        if(acct!=null){
+            String personName = acct.getDisplayName();
+            String personEmail = acct.getEmail();
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                notification.createNotificationChannel1(MainActivity.this);
+//                mNotification.mCreateNotification(MainActivity.this, "Email: " + personEmail, "Name: " + personName);
+//            }
+
+        }
 
         replaceFragment(new HomeFragment());
         replaceAnimation(homeLayout);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            notification.createNotificationChannel1(MainActivity.this);
-//            mNotification.mCreateNotification(MainActivity.this, Constants.TAG , "Nội dung");
-//        }
+
 
         homeLayout.setOnClickListener(v -> {
             if (selectedTab != 1) {
@@ -78,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
+
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        gsc = GoogleSignIn.getClient(this,gso);
         homeLayout = findViewById(R.id.homeLayout);
         likeLayout = findViewById(R.id.likeLayout);
         notificationLayout = findViewById(R.id.notificationLayout);

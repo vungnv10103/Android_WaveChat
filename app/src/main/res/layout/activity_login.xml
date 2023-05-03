@@ -12,11 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginTop="30dp"
+        android:contentDescription="icon"
         android:src="@drawable/icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="icon" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView4"
@@ -33,39 +33,48 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/icon" />
 
-    <com.hbb20.CountryCodePicker
-        android:id="@+id/ccp"
+    <LinearLayout
+        android:id="@+id/layoutInputPhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_24sdp"
-        app:ccp_defaultNameCode="VN"
-        app:ccp_textGravity="LEFT"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_Phone"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_24sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:hint="@string/example_phone"
-        android:textColorHint="@color/gray"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ccp"
-        app:passwordToggleTint="@color/black">
+        app:layout_constraintTop_toBottomOf="@+id/textView4">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edPhone"
+        <com.hbb20.CountryCodePicker
+            android:id="@+id/ccp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/phone_24"
-            android:drawablePadding="@dimen/_12sdp"
-            android:inputType="phone"
-            android:textColor="@color/black" />
+            android:layout_marginHorizontal="@dimen/_24sdp"
+            app:ccp_defaultNameCode="VN"
+            app:ccp_textGravity="LEFT" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_Phone"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_24sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:hint="@string/example_phone"
+            android:textColorHint="@color/gray"
+            app:passwordToggleTint="@color/black">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/phone_24"
+                android:drawablePadding="@dimen/_12sdp"
+                android:inputType="phone"
+                android:textColor="@color/black" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+
     <FrameLayout
         android:id="@+id/layoutButton"
         android:layout_width="match_parent"
@@ -73,25 +82,26 @@
         android:layout_marginTop="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/til_Phone">
+        app:layout_constraintTop_toBottomOf="@+id/layoutInputPhone">
+
         <Button
             android:id="@+id/btnGetOTP"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="14dp"
             android:layout_marginHorizontal="20dp"
+            android:padding="14dp"
             android:text="@string/get_otp"
             android:textAllCaps="false"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:cornerRadius="50dp"
-            />
+            app:cornerRadius="50dp" />
+
         <ProgressBar
             android:id="@+id/progressBar"
-            android:visibility="gone"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
     </FrameLayout>
 
@@ -99,10 +109,10 @@
         android:id="@+id/layoutInputOTP"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:visibility="gone"
         android:layout_marginTop="20dp"
+        android:gravity="center"
         android:orientation="horizontal"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/textView4">
 
         <EditText
@@ -189,6 +199,7 @@
             android:textStyle="bold"
             tools:ignore="LabelFor" />
     </LinearLayout>
+
     <Button
         android:id="@+id/btnVerify"
         android:layout_width="0dp"
@@ -197,8 +208,8 @@
         android:padding="14dp"
         android:text="@string/verify"
         android:textSize="20sp"
-        android:visibility="gone"
         android:textStyle="bold"
+        android:visibility="gone"
         app:cornerRadius="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -209,16 +220,18 @@
         android:id="@+id/tvRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginBottom="28dp"
         android:text="@string/register"
         android:textColor="@color/primary_text"
         android:textSize="@dimen/_14ssp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layoutButton" />
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
@@ -252,8 +265,8 @@
         android:layout_height="56dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
+        android:contentDescription="up_load_image_temp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="up_load_image_temp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
