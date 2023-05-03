@@ -27,5 +27,7 @@
     <color name="error">#B00020</color>
     <color name="primary_text">#212121</color>
     <color name="button_background">#e7e8e9</color>
+    <color name="blue_sky2">#e0fcfe</color>
+    <color name="white_background">#E7E8EA</color>
 
 </resources>

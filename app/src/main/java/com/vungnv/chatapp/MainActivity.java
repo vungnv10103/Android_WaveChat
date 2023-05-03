@@ -3,6 +3,7 @@ package com.vungnv.chatapp;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -17,6 +18,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.vungnv.chatapp.ui.HomeFragment;
 import com.vungnv.chatapp.ui.LikeFragment;
 import com.vungnv.chatapp.ui.NotificationFragment;
@@ -42,15 +45,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         init();
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if(acct!=null){
-            String personName = acct.getDisplayName();
-            String personEmail = acct.getEmail();
+        GoogleSignInAccount acc = GoogleSignIn.getLastSignedInAccount(this);
+        if (acc != null) {
+            String personName = acc.getDisplayName();
+            String personEmail = acc.getEmail();
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //                notification.createNotificationChannel1(MainActivity.this);
 //                mNotification.mCreateNotification(MainActivity.this, "Email: " + personEmail, "Name: " + personName);
 //            }
-
         }
 
         replaceFragment(new HomeFragment());
@@ -93,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     private void init() {
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gsc = GoogleSignIn.getClient(this,gso);
+        gsc = GoogleSignIn.getClient(this, gso);
         homeLayout = findViewById(R.id.homeLayout);
         likeLayout = findViewById(R.id.likeLayout);
         notificationLayout = findViewById(R.id.notificationLayout);
