@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.vungnv.chatapp.R;
 import com.vungnv.chatapp.activities.login.LoginActivity;
+import com.vungnv.chatapp.activities.login.OptionsLoginActivity;
 
 import java.util.Objects;
 
@@ -83,7 +84,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void logOut() {
-        Intent intent = new Intent(getContext(), LoginActivity.class);
+        Intent intent = new Intent(getContext(), OptionsLoginActivity.class);
         Bundle bundle = new Bundle();
         bundle.putBoolean("isShowMsg", false);
         intent.putExtra("data", bundle);
