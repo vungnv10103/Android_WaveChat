@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/_20sdp"
+    tools:context=".activities.login.OptionsLoginActivity">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_26ssp"
+        android:textColor="@color/primary_text"
+        android:fontFamily="@font/alice"
+        android:text="@string/app_name"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:contentDescription="@string/logo"
+        android:src="@drawable/icon" />
+
+    <Button
+        android:id="@+id/btnSignInWithGoogle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/button_background"
+        android:drawableLeft="@drawable/icon_google_32"
+        android:paddingVertical="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:text="@string/sign_in_with_google"
+        android:textAllCaps="false"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/_12ssp"
+        tools:ignore="RtlHardcoded" />
+
+    <Button
+        android:id="@+id/btnSignInWithFaceBook"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:backgroundTint="@color/button_background"
+        android:drawableLeft="@drawable/icon_facebook_32"
+        android:paddingVertical="@dimen/_10sdp"
+        android:text="@string/sign_in_with_fb"
+        android:textAllCaps="false"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/_12ssp"
+        tools:ignore="RtlHardcoded" />
+    <Button
+        android:id="@+id/btnSignInWithEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:backgroundTint="@color/button_background"
+        android:drawableLeft="@drawable/icon_gmail_32"
+        android:paddingVertical="@dimen/_10sdp"
+        android:text="@string/sign_in_with_email"
+        android:textAllCaps="false"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/_12ssp"
+        tools:ignore="RtlHardcoded" />
+
+
+
+    <Button
+        android:id="@+id/btnSignInWithPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:backgroundTint="@color/button_background"
+        android:drawableLeft="@drawable/icon_phone_32"
+        android:paddingVertical="@dimen/_10sdp"
+        android:text="@string/sign_in_with_phone_number"
+        android:textAllCaps="false"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/_12ssp"
+        tools:ignore="RtlHardcoded" />
+
+
+</LinearLayout>
