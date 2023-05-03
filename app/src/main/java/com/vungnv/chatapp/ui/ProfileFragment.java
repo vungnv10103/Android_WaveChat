@@ -62,11 +62,13 @@ public class ProfileFragment extends Fragment {
                 gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(getContext(), "google", Toast.LENGTH_SHORT).show();
                         logOut();
                     }
                 });
             } else {
                 oneTapClient.signOut();
+                Toast.makeText(getContext(), "not google", Toast.LENGTH_SHORT).show();
                 FirebaseAuth.getInstance().signOut();
                 logOut();
             }
