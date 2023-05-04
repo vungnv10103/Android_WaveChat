@@ -1,8 +1,13 @@
 package com.vungnv.chatapp.ui;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -10,24 +15,40 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.kongzue.dialogx.dialogs.FullScreenDialog;
 import com.kongzue.dialogx.interfaces.OnBindView;
 import com.vungnv.chatapp.R;
+import com.vungnv.chatapp.activities.ListUserActivity;
+import com.vungnv.chatapp.activities.login.OptionsLoginActivity;
 import com.vungnv.chatapp.utils.Constants;
+import com.vungnv.chatapp.utils.PreferenceManager;
+
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class HomeFragment extends Fragment {
-    private Button btnAddName, btnAddEmail, btnTest;
-
+    private ImageView imgProfile, imgLogout;
+    private PreferenceManager preferenceManager;
+    private TextView tvName;
+    private FloatingActionButton fabAddUser;
 
     public HomeFragment() {
 
@@ -57,13 +78,13 @@ public class HomeFragment extends Fragment {
             if (name != null && phone != null && email != null) {
 //                Toast.makeText(getContext(), "name: " + name.length(), Toast.LENGTH_SHORT).show();
                 if (name.length() == 0 || phone.length() == 0 || email.length() == 0) {
-                    Toast.makeText(getContext(), "add information", Toast.LENGTH_SHORT).show();
+                    showToast("add information");
                 } else {
 //                Toast.makeText(getContext(), "name: " + null, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(getContext(), "done", Toast.LENGTH_SHORT).show();
+                    showToast("done");
                 }
             } else {
-                Toast.makeText(getContext(), "email null", Toast.LENGTH_SHORT).show();
+                showToast("email null");
             }
 
 
@@ -76,56 +97,70 @@ public class HomeFragment extends Fragment {
             Log.d(Constants.TAG, "data user: " + "name: " + name + " phone: " + phone + " email: " + email);
 //            Log.d(Constants.TAG, "data user: " + currentUser.getDisplayName() + "-" + currentUser.getUid() + "-" + currentUser.getPhoneNumber() +"-" + currentUser.getProviderId() +"-" + currentUser.getEmail() + "-" + currentUser.getPhotoUrl() + "-" +currentUser.getProviderData());
         }
-        btnAddName.setOnClickListener(v -> {
-            String newName = "Vung";
-            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(newName)
-                    .build();
-            currentUser.updateProfile(profileUpdates)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                showToast("success");
 
-                            }
-                        }
-                    });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            setDefaultData();
+        }
+
+        imgLogout.setOnClickListener(v -> {
+            logOut();
         });
-        btnAddEmail.setOnClickListener(v -> {
-            currentUser.updateEmail("vanvung123az@gmail.com")
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                showToast("User email address updated.");
-                                Log.d(Constants.TAG, "User email address updated.");
-                            } else {
-                                showToast("Error, " + Objects.requireNonNull(task.getException()).getMessage());
-                                Log.d(Constants.TAG, Objects.requireNonNull(task.getException()).getMessage());
-                            }
-                        }
-                    });
-        });
-        btnTest.setOnClickListener(v -> {
-            FullScreenDialog.show(new OnBindView<FullScreenDialog>(R.layout.bottom_sheet_add_to_cart) {
-                @Override
-                public void onBind(FullScreenDialog dialog, View v) {
-                    //View childView = v.findViewById(resId)...
-                }
-            });
+        fabAddUser.setOnClickListener(v -> {
+            startActivity(new Intent(getContext(), ListUserActivity.class));
         });
         return root;
     }
 
     private void init(View root) {
-        btnAddName = root.findViewById(R.id.btnAddName);
-        btnAddEmail = root.findViewById(R.id.btnAddEmail);
-        btnTest = root.findViewById(R.id.btnTest);
+        preferenceManager = new PreferenceManager(requireContext());
+        imgProfile = root.findViewById(R.id.imgProfile);
+        imgLogout = root.findViewById(R.id.imgLogout);
+        tvName = root.findViewById(R.id.tvNameUser);
+        fabAddUser = root.findViewById(R.id.fabAddUser);
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void setDefaultData() {
+        if (preferenceManager.checkDataDefaultExits()) {  // login with email default
+            tvName.setText(preferenceManager.getString(Constants.KEY_NAME));
+            byte[] bytes = Base64.getDecoder().decode(preferenceManager.getString(Constants.KEY_IMAGE));
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            imgProfile.setImageBitmap(bitmap);
+        } else {  // login with providers
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null) {
+                tvName.setText(user.getDisplayName());
+            }
+        }
+
+    }
+
+
     private void showToast(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void logOut() {
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        DocumentReference documentReference =
+                firebaseFirestore.collection(Constants.KEY_COLLECTION_USER)
+                        .document(preferenceManager.getString(Constants.KEY_USER_ID));
+        HashMap<String, Object> updates = new HashMap<>();
+        updates.put(Constants.KEY_FCM_TOKEN, FieldValue.delete());
+        documentReference.update(updates)
+                .addOnSuccessListener(unused -> {
+                    preferenceManager.clear();
+                    Intent intent = new Intent(getContext(), OptionsLoginActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("isShowMsg", false);
+                    intent.putExtra("data", bundle);
+                    startActivity(intent);
+                    requireActivity().finish();
+                })
+                .addOnFailureListener(e -> {
+                    showToast("unable to logout");
+                });
+
     }
 }

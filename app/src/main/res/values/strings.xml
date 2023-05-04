@@ -33,4 +33,7 @@
     <string name="sign_in_with_email">Sign in with Email</string>
     <string name="sign_in_with_phone_number">Sign in with PhoneNumber</string>
     <string name="logo">logo</string>
+    <string name="select_user">Select User</string>
+    <string name="error_get_data">Lỗi lấy data</string>
+    <string name="type_a_message">Type a message</string>
 </resources>

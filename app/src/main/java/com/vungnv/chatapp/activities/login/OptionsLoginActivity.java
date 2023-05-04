@@ -25,6 +25,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.vungnv.chatapp.MainActivity;
 import com.vungnv.chatapp.R;
 import com.vungnv.chatapp.utils.Constants;
+import com.vungnv.chatapp.utils.PreferenceManager;
 
 public class OptionsLoginActivity extends AppCompatActivity {
 
@@ -33,6 +34,7 @@ public class OptionsLoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private GoogleSignInOptions gso;
     private GoogleSignInClient gsc;
+    private PreferenceManager preferenceManager;
 
 
     @Override
@@ -55,6 +57,7 @@ public class OptionsLoginActivity extends AppCompatActivity {
     }
 
     private void init() {
+        preferenceManager = new PreferenceManager(getApplicationContext());
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this, gso);
         btnLWEmail = findViewById(R.id.btnSignInWithEmail);
@@ -79,9 +82,15 @@ public class OptionsLoginActivity extends AppCompatActivity {
             startActivity(new Intent(OptionsLoginActivity.this, MainActivity.class));
             finishAffinity();
         } else {
-            if (isShow && checkLogin == 0) {
-                Toast.makeText(this, "Phiên đăng nhâp hết hạn", Toast.LENGTH_SHORT).show();
+            if (preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)) {  // login by email
+                startActivity(new Intent(OptionsLoginActivity.this, MainActivity.class));
+                finishAffinity();
+            } else {
+                if (isShow && checkLogin == 0) {
+                    Toast.makeText(this, "Phiên đăng nhâp hết hạn", Toast.LENGTH_SHORT).show();
+                }
             }
+
 
         }
     }
