@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.vungnv.chatapp.R;
 import com.vungnv.chatapp.activities.login.LoginActivity;
 import com.vungnv.chatapp.activities.login.OptionsLoginActivity;
+import com.vungnv.chatapp.utils.PreferenceManager;
 
 import java.util.Objects;
 
@@ -33,6 +34,7 @@ public class ProfileFragment extends Fragment {
     private GoogleSignInOptions gso;
     private GoogleSignInClient gsc;
     private SignInClient oneTapClient;
+    private PreferenceManager preferenceManager;
 
 
     public ProfileFragment() {
@@ -78,6 +80,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void init(View root) {
+        preferenceManager = new PreferenceManager(requireActivity());
         btnLogout = root.findViewById(R.id.btnLogout);
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(requireActivity(), gso);
@@ -86,6 +89,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void logOut() {
+        preferenceManager.clear();
         Intent intent = new Intent(getContext(), OptionsLoginActivity.class);
         Bundle bundle = new Bundle();
         bundle.putBoolean("isShowMsg", false);

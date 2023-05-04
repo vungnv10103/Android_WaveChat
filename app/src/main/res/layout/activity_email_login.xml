@@ -120,6 +120,16 @@
             android:textColor="@color/primary_text"
             android:textSize="@dimen/_14ssp"
             android:textStyle="bold" />
+        <TextView
+            android:id="@+id/tvRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:text="@string/register"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold" />
+
 
     </LinearLayout>
 

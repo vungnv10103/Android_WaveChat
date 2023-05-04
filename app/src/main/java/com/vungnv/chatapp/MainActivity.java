@@ -1,16 +1,18 @@
 package com.vungnv.chatapp;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -20,13 +22,19 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.vungnv.chatapp.ui.HomeFragment;
 import com.vungnv.chatapp.ui.LikeFragment;
 import com.vungnv.chatapp.ui.NotificationFragment;
 import com.vungnv.chatapp.ui.ProfileFragment;
 import com.vungnv.chatapp.utils.Constants;
+import com.vungnv.chatapp.utils.PreferenceManager;
 import com.vungnv.chatapp.utils.createNotification;
 import com.vungnv.chatapp.utils.createNotificationChannel;
+
+import java.util.Base64;
 
 public class MainActivity extends AppCompatActivity {
     private final createNotificationChannel notification = new createNotificationChannel();
@@ -38,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private int selectedTab = 1;
     private GoogleSignInOptions gso;
     private GoogleSignInClient gsc;
+    private PreferenceManager preferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
 //                notification.createNotificationChannel1(MainActivity.this);
 //                mNotification.mCreateNotification(MainActivity.this, "Email: " + personEmail, "Name: " + personName);
 //            }
+        }
+        if (preferenceManager.checkDataDefaultExits()) {
+            getToken();
         }
 
         replaceFragment(new HomeFragment());
@@ -93,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-
+        preferenceManager = new PreferenceManager(getApplicationContext());
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this, gso);
         homeLayout = findViewById(R.id.homeLayout);
@@ -110,6 +122,28 @@ public class MainActivity extends AppCompatActivity {
         tvLike = findViewById(R.id.likeTv);
         tvNotification = findViewById(R.id.notificationTv);
         tvProfile = findViewById(R.id.profileTv);
+    }
+
+    private void updateToken(String token) {
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        DocumentReference documentReference =
+                firebaseFirestore.collection(Constants.KEY_COLLECTION_USER)
+                        .document(preferenceManager.getString(Constants.KEY_USER_ID));
+        documentReference.update(Constants.KEY_FCM_TOKEN, token)
+                .addOnSuccessListener(unused -> {
+                    showToast("Token update successfully");
+                })
+                .addOnFailureListener(e -> {
+                    showToast("unable to update token");
+                });
+    }
+
+    private void getToken() {
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(this::updateToken);
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     private void replaceFragment(Fragment fragment) {
