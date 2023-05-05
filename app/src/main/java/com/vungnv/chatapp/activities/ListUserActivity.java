@@ -70,6 +70,7 @@ public class ListUserActivity extends AppCompatActivity implements IUserListener
                                     continue;
                                 }
                                 UserModel2 user = new UserModel2();
+                                user.id = data.getId();
                                 user.name = data.getString(Constants.KEY_NAME);
                                 user.email = data.getString(Constants.KEY_EMAIL);
                                 user.image = data.getString(Constants.KEY_IMAGE);

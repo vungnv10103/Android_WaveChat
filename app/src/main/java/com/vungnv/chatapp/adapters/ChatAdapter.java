@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,7 +44,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return new SentMessageViewHolder(viewSent);
         } else {
             View viewReceived = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_container_received_message, parent, false);
-            return new SentMessageViewHolder(viewReceived);
+            return new ReceivedMessageViewHolder(viewReceived);
         }
     }
 
@@ -65,8 +66,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public int getItemViewType(int position) {
         if (chatMessage.get(position).senderId.equals(senderId)) {
             return VIEW_TYPE_SENT;
+        } else {
+            return VIEW_TYPE_RECEIVED;
         }
-        return VIEW_TYPE_RECEIVED;
+
     }
 
 
@@ -75,12 +78,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         public SentMessageViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvMessage = itemView.findViewById(R.id.tvNameUser);
-            tvDateTime = itemView.findViewById(R.id.tvLatestMsg);
-
+            tvMessage = itemView.findViewById(R.id.tvMessage);
+            tvDateTime = itemView.findViewById(R.id.tvTime);
 
             itemView.setOnClickListener(v -> {
-
+                Toast.makeText(v.getContext(), "sent", Toast.LENGTH_SHORT).show();
             });
         }
 
@@ -97,14 +99,12 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         public ReceivedMessageViewHolder(@NonNull View itemView) {
             super(itemView);
-
             imgProfile = itemView.findViewById(R.id.imgProfile);
-            tvMessage = itemView.findViewById(R.id.tvNameUser);
-            tvDateTime = itemView.findViewById(R.id.tvLatestMsg);
-
+            tvMessage = itemView.findViewById(R.id.tvMessage);
+            tvDateTime = itemView.findViewById(R.id.tvTime);
 
             itemView.setOnClickListener(v -> {
-
+                Toast.makeText(v.getContext(), "received", Toast.LENGTH_SHORT).show();
             });
         }
 
