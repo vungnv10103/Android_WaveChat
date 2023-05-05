@@ -71,6 +71,7 @@
     <View
         android:id="@+id/viewSupporter"
         android:layout_width="match_parent"
+        android:background="@color/primary"
         android:layout_height="1dp"
         android:layout_marginTop="@dimen/_12sdp"
         app:layout_constraintTop_toBottomOf="@id/imgBack" />
@@ -81,6 +82,7 @@
         android:layout_height="0dp"
         android:clipToPadding="false"
         android:orientation="vertical"
+        app:stackFromEnd="true"
         android:overScrollMode="never"
         android:padding="@dimen/_20sdp"
         android:visibility="gone"
