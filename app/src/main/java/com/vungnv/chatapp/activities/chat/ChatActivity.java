@@ -10,12 +10,16 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -47,6 +51,7 @@ public class ChatActivity extends AppCompatActivity {
     private List<ChatMessageModel> listChat;
     private RecyclerView rcvChat;
     private EditText inputMessage;
+    private String conversationId = null;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -95,7 +100,24 @@ public class ChatActivity extends AppCompatActivity {
         message.put(Constants.KEY_MESSAGE, msgContent);
         message.put(Constants.KEY_TIMESTAMP, new Date());
         firebaseFirestore.collection(Constants.KEY_COLLECTION_CHAT).add(message);
-        inputMessage.setText("");
+        if (conversationId != null) {
+            Toast.makeText(this, "update", Toast.LENGTH_SHORT).show();
+            updateConversation(msgContent);
+        } else {
+            Toast.makeText(this, "add", Toast.LENGTH_SHORT).show();
+            HashMap<String, Object> conversation = new HashMap<>();
+            conversation.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+            conversation.put(Constants.KEY_SENDER_NAME, preferenceManager.getString(Constants.KEY_NAME));
+            conversation.put(Constants.KEY_SENDER_IMAGE, preferenceManager.getString(Constants.KEY_IMAGE));
+            conversation.put(Constants.KEY_RECEIVED_ID, receivedUser.id);
+            conversation.put(Constants.KEY_RECEIVED_NAME, receivedUser.name);
+            conversation.put(Constants.KEY_RECEIVED_IMAGE, receivedUser.image);
+            conversation.put(Constants.KEY_LATEST_MESSAGE, msgContent);
+            conversation.put(Constants.KEY_TIMESTAMP, new Date());
+
+            addConversation(conversation);
+        }
+        inputMessage.setText(null);
     }
 
     private void listenMessage() {
@@ -140,6 +162,9 @@ public class ChatActivity extends AppCompatActivity {
             rcvChat.setVisibility(View.VISIBLE);
         } else {
             rcvChat.setVisibility(View.GONE);
+            if (conversationId == null) {
+                checkForConversation();
+            }
         }
     };
 
@@ -157,5 +182,44 @@ public class ChatActivity extends AppCompatActivity {
     private String getReadableDateTime(Date date) {
         return new SimpleDateFormat("MMMM dd, yyyy - hh:mm a", Locale.getDefault()).format(date);
     }
+
+    private void addConversation(HashMap<String, Object> conversation) {
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_CONVERSATION)
+                .add(conversation)
+                .addOnSuccessListener(documentReference -> {
+                    conversationId = documentReference.getId();
+                });
+    }
+
+    private void checkForConversation() {
+        if (listChat.size() != 0) {
+            checkForConversationRemotely(preferenceManager.getString(Constants.KEY_USER_ID), receivedUser.id);
+            checkForConversationRemotely(receivedUser.id, preferenceManager.getString(Constants.KEY_USER_ID));
+        }
+    }
+
+    private void updateConversation(String message) {
+        DocumentReference documentReference = firebaseFirestore.collection(Constants.KEY_COLLECTION_CONVERSATION).document(conversationId);
+        documentReference.update(
+                Constants.KEY_LATEST_MESSAGE, message,
+                Constants.KEY_TIMESTAMP, new Date()
+        );
+    }
+
+    private void checkForConversationRemotely(String senderId, String receivedId) {
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_CONVERSATION)
+                .whereEqualTo(Constants.KEY_SENDER_ID, senderId)
+                .whereEqualTo(Constants.KEY_RECEIVED_ID, receivedId)
+                .get()
+                .addOnCompleteListener(conversationCompleteListener);
+
+    }
+
+    private final OnCompleteListener<QuerySnapshot> conversationCompleteListener = task -> {
+        if (task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() > 0) {
+            DocumentSnapshot snapshot = task.getResult().getDocuments().get(0);
+            conversationId = snapshot.getId();
+        }
+    };
 
 }

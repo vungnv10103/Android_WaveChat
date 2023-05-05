@@ -6,49 +6,55 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.kongzue.dialogx.dialogs.FullScreenDialog;
-import com.kongzue.dialogx.interfaces.OnBindView;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.vungnv.chatapp.R;
 import com.vungnv.chatapp.activities.ListUserActivity;
+import com.vungnv.chatapp.activities.chat.ChatActivity;
 import com.vungnv.chatapp.activities.login.OptionsLoginActivity;
+import com.vungnv.chatapp.adapters.RecentConversationsAdapter;
+import com.vungnv.chatapp.listeners.IConversionListener;
+import com.vungnv.chatapp.models.ChatMessageModel;
+import com.vungnv.chatapp.models.UserModel2;
 import com.vungnv.chatapp.utils.Constants;
 import com.vungnv.chatapp.utils.PreferenceManager;
 
-import org.checkerframework.checker.units.qual.C;
-
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Objects;
+import java.util.List;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements IConversionListener {
     private ImageView imgProfile, imgLogout;
     private PreferenceManager preferenceManager;
     private TextView tvName;
     private FloatingActionButton fabAddUser;
+    private List<ChatMessageModel> listChat;
+    private RecentConversationsAdapter recentConversionsAdapter;
+    private FirebaseFirestore firebaseFirestore;
+    private RecyclerView rcvListRecentConversion;
+    private ProgressBar progressBar;
 
     public HomeFragment() {
 
@@ -78,13 +84,13 @@ public class HomeFragment extends Fragment {
             if (name != null && phone != null && email != null) {
 //                Toast.makeText(getContext(), "name: " + name.length(), Toast.LENGTH_SHORT).show();
                 if (name.length() == 0 || phone.length() == 0 || email.length() == 0) {
-                    showToast("add information");
+//                    showToast("add information");
                 } else {
 //                Toast.makeText(getContext(), "name: " + null, Toast.LENGTH_SHORT).show();
-                    showToast("done");
+//                    showToast("done");
                 }
             } else {
-                showToast("email null");
+//                showToast("email null");
             }
 
 
@@ -108,6 +114,7 @@ public class HomeFragment extends Fragment {
         fabAddUser.setOnClickListener(v -> {
             startActivity(new Intent(getContext(), ListUserActivity.class));
         });
+        listenerConversation();
         return root;
     }
 
@@ -117,7 +124,10 @@ public class HomeFragment extends Fragment {
         imgLogout = root.findViewById(R.id.imgLogout);
         tvName = root.findViewById(R.id.tvNameUser);
         fabAddUser = root.findViewById(R.id.fabAddUser);
-
+        listChat = new ArrayList<>();
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        rcvListRecentConversion = root.findViewById(R.id.rcvListRecentConversion);
+        progressBar = root.findViewById(R.id.progressBar);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -133,8 +143,65 @@ public class HomeFragment extends Fragment {
                 tvName.setText(user.getDisplayName());
             }
         }
+        recentConversionsAdapter = new RecentConversationsAdapter(getContext(), listChat, this);
+        rcvListRecentConversion.setAdapter(recentConversionsAdapter);
 
     }
+
+    private void listenerConversation() {
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_CONVERSATION)
+                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .addSnapshotListener(eventListener);
+        firebaseFirestore.collection(Constants.KEY_COLLECTION_CONVERSATION)
+                .whereEqualTo(Constants.KEY_RECEIVED_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .addSnapshotListener(eventListener);
+
+    }
+
+    private final EventListener<QuerySnapshot> eventListener = ((value, error) -> {
+        if (error != null) {
+            return;
+        }
+        if (value != null) {
+            for (DocumentChange documentChange : value.getDocumentChanges()) {
+                if (documentChange.getType() == DocumentChange.Type.ADDED) {
+                    String senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
+                    String receivedId = documentChange.getDocument().getString(Constants.KEY_RECEIVED_ID);
+                    ChatMessageModel messageModel = new ChatMessageModel();
+                    messageModel.senderId = senderId;
+                    messageModel.receivedId = receivedId;
+                    if (preferenceManager.getString(Constants.KEY_USER_ID).equals(senderId)) {
+                        messageModel.conversionImage = documentChange.getDocument().getString(Constants.KEY_RECEIVED_IMAGE);
+                        messageModel.conversionName = documentChange.getDocument().getString(Constants.KEY_RECEIVED_NAME);
+                        messageModel.conversionId = documentChange.getDocument().getString(Constants.KEY_RECEIVED_ID);
+                    } else {
+                        messageModel.conversionImage = documentChange.getDocument().getString(Constants.KEY_SENDER_IMAGE);
+                        messageModel.conversionName = documentChange.getDocument().getString(Constants.KEY_SENDER_NAME);
+                        messageModel.conversionId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
+                    }
+                    messageModel.message = documentChange.getDocument().getString(Constants.KEY_LATEST_MESSAGE);
+                    messageModel.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+                    listChat.add(messageModel);
+                } else if (documentChange.getType() == DocumentChange.Type.MODIFIED) {
+                    int sum = listChat.size();
+                    for (int i = 0; i < sum; i++) {
+                        String senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
+                        String receivedId = documentChange.getDocument().getString(Constants.KEY_RECEIVED_ID);
+                        if (listChat.get(i).senderId.equals(senderId) && listChat.get(i).receivedId.equals(receivedId)) {
+                            listChat.get(i).message = documentChange.getDocument().getString(Constants.KEY_LATEST_MESSAGE);
+                            listChat.get(i).dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+                            break;
+                        }
+                    }
+                }
+            }
+            Collections.sort(listChat, ((o1, o2) -> o2.dateObject.compareTo(o1.dateObject)));
+            recentConversionsAdapter.notifyDataSetChanged();
+            rcvListRecentConversion.smoothScrollToPosition(0);
+            rcvListRecentConversion.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
+        }
+    });
 
 
     private void showToast(String message) {
@@ -162,5 +229,13 @@ public class HomeFragment extends Fragment {
                     showToast("unable to logout");
                 });
 
+    }
+
+    @Override
+    public void onConversionClicked(UserModel2 user) {
+        Intent intent = new Intent(getContext(), ChatActivity.class);
+        intent.putExtra(Constants.KEY_USER, user);
+        startActivity(intent);
+//        requireActivity().finish();
     }
 }

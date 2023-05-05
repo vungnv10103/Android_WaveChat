@@ -18,6 +18,13 @@ public class Constants {
     public static final String KEY_RECEIVED_ID = "receivedId";
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_TIMESTAMP = "timestamp";
+    public static final String KEY_COLLECTION_CONVERSATION = "conversations";
+    public static final String KEY_SENDER_NAME = "senderName";
+    public static final String KEY_RECEIVED_NAME = "receivedName";
+    public static final String KEY_SENDER_IMAGE = "senderImage";
+    public static final String KEY_RECEIVED_IMAGE = "receivedImage";
+    public static final String KEY_LATEST_MESSAGE = "latestMessage";
+
 
     public static final String HEX_CHAR = "0123456789ABCDEF";
     public static final String KEY_USER = "user";
